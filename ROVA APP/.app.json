@@ -5,7 +5,23 @@
       "type": "kendo-ui-mobile:view",
       "name": "home",
       "components": [],
-      "title": "Home View",
+      "title": "Wegingen",
+      "addToNavigation": true,
+      "icon": "home"
+    },
+    {
+      "type": "kendo-ui-mobile:view",
+      "name": "weging",
+      "components": [],
+      "title": "Weging",
+      "addToNavigation": true,
+      "icon": "home"
+    },
+    {
+      "type": "kendo-ui-mobile:view",
+      "name": "scan",
+      "components": [],
+      "title": "Scan",
       "addToNavigation": true,
       "icon": "home"
     }

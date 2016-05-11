@@ -1,7 +1,233 @@
-<div data-role="view" data-title="Home View" data-layout="main" data-model="app.home" data-show="app.home.onShow" data-after-show="app.home.afterShow">
+<div data-reload="true" data-role="view" data-title="Wegingen" data-layout="main" data-model="app.home" data-show="app.home.onShow" data-after-show="app.home.afterShow">
 
     <!-- START_CUSTOM_CODE_home -->
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
+   
+<div id="grid"></div>
 
+<script id="popup-editor" type="text/x-kendo-template">
+<div style="width: 250px; float:left; margin-left: 10px; margin-bottom: 5%; margin-right: 8%">
+  <table>
+  <tr><td><label>Bonnr:  	</label></td><td align="right">#=bonnr#			</td><tr>
+  <tr><td><label>Datum:		</label></td><td align="right">#=datum#			</td><tr>
+  <tr><td><label>Gewicht:	</label></td><td align="right">#=inweging# kg	</td><tr>
+  <tr><td><label>Quotum: 	</label></td><td align="right">#=quotum# kg		</td><tr>
+  <tr><td><label>Adres:  	</label></td><td align="right">#=postcode#		</td><tr>
+  <tr><td><label>     		</label></td><td align="right">#=gemeente#		</td><tr>
+  <tr><td><label>     		</label></td><td align="right">#=straat#		</td><tr>
+  <tr><td><label>Tarief:	</label></td><td align="right" format: "{0:c}">&euro; #=afvalPrijs(afval)#</td><tr>
+  <!--tr><td><label>Afval:		</label></td><td align="right">
+	  	<input 
+    		name="afval_id" 
+			data-bind="value:afval_id" 
+			data-value-field="afval_id" 
+			data-text-field="afval_omschr.substr(0,30)" 
+			data-source="afvalDataSource" 
+			data-role="dropdownlist" 
+    	/>
+  </td><tr-->
+  </table>
+      <div class="k-edit-label">
+        <label for="afval">Afval:</label>
+    </div>
+    <div>
+	  	<input style="width: 180px"
+        	id="afval"
+    		name="afval" 
+			data-bind="value:afval" 
+			data-role="dropdownlist" 
+        />
+        <!--span class="k-invalid-msg" data-for="afval"></span-->
+    </div>
+  <!--input data-role="numerictextbox" name="age" /--> 
+    	<!--input name="kenteken"-->
+  </div>
+</script>
+    
+<script>
+    
+    var afval=afvalDataSource.data();
+    kendo.culture("nl-NL");
+
+    
+    $(document).ready(function () {
+        /* Grid */
+        $("#grid").kendoGrid({
+            dataSource: wegingenDataSource,
+            sortable: true,
+            /*mobile: true,*/
+
+            scrollable: false,
+            height: 430,
+
+            pageable: {
+                refresh: true,
+                buttonCount: 3,
+                info: false,
+            },
+            /*selectable: true,*/
+	        change: function() {   
+                var text = "";
+                var grid = this;                
+
+                grid.select().each(function() {
+                    var dataItem = grid.dataItem($(this));
+                    text += "ID: " + dataItem.id + "\n";
+                    text += "hiddenkey: " + dataItem.hiddenkey + "\n";
+                });
+
+                alert(text);
+            },
+            /*editable: {mode: "inline"},*/
+            editable: {
+                mode: "popup",
+                template: kendo.template($("#popup-editor").html()),
+                window : {
+			        title: "Weegbon",
+                    
+                    width: "90%",
+                    height: "80%",
+                    
+                    draggable: false,
+                    modal: true,
+                    pinned: false,
+                    position: {
+                        top: "1px",
+                        left: "1px"
+                    },
+    			},
+            },
+            edit: function (e) {
+          	  initDropDownLists();
+        	},
+            autoBind: true,
+	        dataBinding: function() {   
+                /*alert("dataBinding");*/
+            },
+	        dataBound: function() {   
+                /*alert("dataBound");*/
+            },
+            columns: [
+                {
+                    field: "bonnr",
+                    title: "Bonnr",
+                    width: 100,
+                }, 
+                {
+                    field: "afval",
+                    template: "#=afvalOmschr(afval)#",
+                    /*
+                    editor: afvalDropDownEditor,
+                    template: "#: afval ? afval.afval_omschr : null#",
+                    */
+                    title: "Afval",
+                    width: 150,
+                },
+                { 	command: [
+                 		{ 	name: "edit",
+                          	text: 
+                         	{ 
+                                edit: "",
+                             	update: "Opslaan",
+                               	cancel: "Annuleren"
+                            }
+                        },
+                    ], 
+                 	title: "&nbsp;", 
+                 	width: "10px" 
+                },
+            ]
+        });
+      
+    });
+    
+    function initDropDownLists() {
+        /*alert("initDropDownLists");*/
+        var afval = $("#afval").kendoDropDownList({
+            optionLabel: "Select afval...",
+            dataTextField: "afval_omschr",
+            dataValueField: "afval_id",
+            dataSource: afvalDataSource
+        }).data("kendoDropDownList");
+    }
+    
+    /* Wordt alleen gebruikt bij inline edit mode */
+    function afvalDropDownEditor(container, options) {
+          $('<input required name="' + options.field + '"/>')
+                .appendTo(container)
+                .kendoDropDownList({
+                    dataTextField: "afval_omschr.substr(0,14)",
+                    dataValueField: "afval_id",
+                    dataSource: afvalDataSource
+            });
+    }
+    
+    function afvalOmschr(afval_id) {
+        for (var i = 0; i < afval.length; i++) {
+            if (afval[i].afval_id == afval_id) {
+                return afval[i].afval_omschr.substr(0, 20);
+            }
+        }
+    }    
+    
+    function afvalPrijs(afval_id) {
+        for (var i = 0; i < afval.length; i++) {
+            if (afval[i].afval_id == afval_id) {
+                return afval[i].prijs;
+            }
+        }
+    }    
+    
+</script>
+<style>
+
+/*
+    Increase the width of the edit form.
+    The default one is 400px.
+*/
+
+.k-edit-form-container
+{
+    width: 280px;
+}
+
+/*
+    Decrease the width of the edit form labels. The default one is 30%.
+    The new width should depend on the column titles.
+    Switch the text alignment to the left. By default, it is to the right.
+*/
+
+.k-popup-edit-form .k-edit-label
+{
+    width: 20%;
+    text-align: left;
+}
+
+/*
+    Increase the width of the textbox containers. The default one is 60%.
+    The sum of label and editor percentage widths should be around 90%, to make up for existing paddings.
+*/
+.k-popup-edit-form .k-edit-field
+{
+    width: 70%;
+}
+
+/*
+    Expand the edit textboxes and any other Kendo UI widgets.
+    In case of unexpected side effects, use widget-specific classes, instead of .k-widget.
+*/
+.k-popup-edit-form .k-edit-field > .k-textbox,
+.k-popup-edit-form .k-edit-field > .k-widget
+{
+    width: 98%;
+}
+
+.k-grid .k-button
+{
+    min-width: 0 !important;
+}    
+    
+</style>    
+   
     <!-- END_CUSTOM_CODE_home -->
 </div>

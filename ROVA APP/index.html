@@ -11,12 +11,24 @@
 
     <script src="cordova.js"></script>
     <script src="kendo/js/jquery.min.js"></script>
-    <script src="kendo/js/kendo.mobile.min.js"></script>
     <script src="app.js"></script>
+    
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2016.2.504/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2016.2.504/styles/kendo.rtl.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2016.2.504/styles/kendo.silver.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2016.2.504/styles/kendo.mobile.all.min.css"/>
+
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <!--script src="http://code.jquery.com/jquery-1.7.2.min.js"></script-->
+    <script src="http://kendo.cdn.telerik.com/2016.2.504/js/kendo.all.min.js"></script>
 </head>
 
 <body id="kendoUiMobileApp">
+    <script src="components/scan/index.js"></script>
+    <script src="components/weging/index.js"></script>
     <script src="components/home/index.js"></script>
+    <script src="kendo/js/kendo.culture.nl-NL.js"></script>
+    
     <div data-role="layout" data-id="main">
         <header data-role="header">
             <div data-role="navbar">
@@ -25,7 +37,9 @@
         </header>
         <footer data-role="footer">
             <div data-role="tabstrip" id="navigation-container">
-                <a href="components/home/view.html" data-icon="home">Home View</a>
+                <a href="components/home/view.html" data-icon="home">Wegingen</a>
+                <!--a href="components/weging/view.html" data-icon="home">Weging</a-->
+                <a href="components/scan/view.html" data-icon="home">Scan</a>
             </div>
         </footer>
     </div>
@@ -41,7 +55,81 @@
     </div>
     <!-- START_CUSTOM_CODE_kendoUiMobileApp -->
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
+<script>
+    kendo.culture("nl-NL")
+    var url="http://clearweigh.gmt.nl/demo/";
+    var wegingenDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: url + "wegingen",
+                /*url: "wegingen.jsonp",*/
+                jsonpCallback: "CallBackWegingen",
+                type: "get",
+                dataType: "jsonp",
+                cache: false,
+            },
+            update: {
+                url: url + "wegingupdate",
+                type: "get",
+                dataType: "jsonp",
+                jsonpCallback: "CallBackWegingUpdate",
+                            complete: function(e) {
+				$("#grid").data("kendoGrid").dataSource.read(); 
+			},
+            }
+        },
+        page: 1,
+        pageSize: 11,
+        // describe the result format
+        schema: {
+			model: {
+                id: "hiddenkey",
+                fields: {
+                    hiddenkey: 	{type: "number", hidden: true},
+                    bonnr: 		{type: "string"},
+                    postcode: 	{type: "string"},
+                    datum:		{type: "string"},
+                    afval:   	{type: "number", hidden: true},
+                    afval_type: {type: "string", hidden: true},
+                    quotum:     {type: "number"},
+                    inweging:   {type: "number"},
+                    straat:     {type: "string"},
+                    plaats:     {type: "string"},
+                    gemeente:   {type: "string"},
+                }
+            }            
+        },
+    });    
 
+    var afvalDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: "afval.jsonp",
+                jsonpCallback: "CallBackAfval",
+                type: "get",
+                dataType: "jsonp",
+                cache: false,
+             },
+        },
+        // describe the result format
+        schema: {
+			model: {
+                id: "afval_id",
+                fields: {
+                    afval_id:		{type: "number"},
+                    afval_code:		{type: "string"},
+                    afval_omschr: 	{type: "string"},
+                    prijs:			{type: "number"},
+                    afval_type_C1:  {type: "number", hidden: true},
+                    afval_type_C2:  {type: "number", hidden: true},
+                    afval_type_C3:  {type: "number", hidden: true},
+                }
+            }            
+        },
+    });
+    afvalDataSource.read();
+</script>    
+    
     <!-- END_CUSTOM_CODE_kendoUiMobileApp -->
 </body>
 

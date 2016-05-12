@@ -1,7 +1,11 @@
-<div data-reload="true" data-role="view" data-title="Wegingen" data-layout="main" data-model="app.home" data-show="app.home.onShow" data-after-show="app.home.afterShow">
+<div data-reload="true" data-role="view" data-title="Wegingen" data-layout="main" data-model="app.demoService.viewModel" data-show="app.home.onShow" data-after-show="app.home.afterShow">
 
     <!-- START_CUSTOM_CODE_home -->
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
+    <footer data-role="footer">
+		<button data-role="button" data-icon="camera" class="button" data-bind="click: scanBack">Scan barcode</button>
+		<button data-role="button" data-icon="refresh" class="button" onclick="Refresh()" style="float:right;">Refresh</button>
+    </footer>
    
 <div id="grid"></div>
 
@@ -16,16 +20,6 @@
   <tr><td><label>     		</label></td><td align="right">#=gemeente#		</td><tr>
   <tr><td><label>     		</label></td><td align="right">#=straat#		</td><tr>
   <tr><td><label>Tarief:	</label></td><td align="right" format: "{0:c}">&euro; #=afvalPrijs(afval)#</td><tr>
-  <!--tr><td><label>Afval:		</label></td><td align="right">
-	  	<input 
-    		name="afval_id" 
-			data-bind="value:afval_id" 
-			data-value-field="afval_id" 
-			data-text-field="afval_omschr.substr(0,30)" 
-			data-source="afvalDataSource" 
-			data-role="dropdownlist" 
-    	/>
-  </td><tr-->
   </table>
       <div class="k-edit-label">
         <label for="afval">Afval:</label>
@@ -37,10 +31,7 @@
 			data-bind="value:afval" 
 			data-role="dropdownlist" 
         />
-        <!--span class="k-invalid-msg" data-for="afval"></span-->
     </div>
-  <!--input data-role="numerictextbox" name="age" /--> 
-    	<!--input name="kenteken"-->
   </div>
 </script>
     
@@ -48,8 +39,11 @@
     
     var afval=afvalDataSource.data();
     kendo.culture("nl-NL");
-
     
+    function Refresh() {
+        $("#grid").data("kendoGrid").dataSource.read();
+    };
+
     $(document).ready(function () {
         /* Grid */
         $("#grid").kendoGrid({
@@ -138,7 +132,6 @@
                 },
             ]
         });
-      
     });
     
     function initDropDownLists() {
@@ -149,7 +142,7 @@
             dataValueField: "afval_id",
             dataSource: afvalDataSource
         }).data("kendoDropDownList");
-    }
+    };
     
     /* Wordt alleen gebruikt bij inline edit mode */
     function afvalDropDownEditor(container, options) {
@@ -160,7 +153,7 @@
                     dataValueField: "afval_id",
                     dataSource: afvalDataSource
             });
-    }
+    };
     
     function afvalOmschr(afval_id) {
         for (var i = 0; i < afval.length; i++) {
@@ -168,7 +161,7 @@
                 return afval[i].afval_omschr.substr(0, 20);
             }
         }
-    }    
+    };
     
     function afvalPrijs(afval_id) {
         for (var i = 0; i < afval.length; i++) {
@@ -176,8 +169,7 @@
                 return afval[i].prijs;
             }
         }
-    }    
-    
+    };
 </script>
 <style>
 

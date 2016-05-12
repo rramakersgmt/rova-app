@@ -91,9 +91,21 @@
                     },
     			},
             },
+            edit: function(e) {
+	        	initDropDownLists();
+/*
+                alert("edit");
+            	
+                $(e.container).find("input[name='afval']")
+                $(e.container).data("kendoAutoComplete")
+                $(e.container).bind("change", function(e) {alert("edit changed");});
+*/                
+        	},
+            /*
             edit: function (e) {
           	  initDropDownLists();
         	},
+            */
             autoBind: true,
 	        dataBinding: function() {   
                 /*alert("dataBinding");*/

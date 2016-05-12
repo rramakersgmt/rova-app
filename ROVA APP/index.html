@@ -78,11 +78,20 @@
                 type: "get",
                 dataType: "jsonp",
                 jsonpCallback: "CallBackWegingUpdate",
-                            complete: function(e) {
-				$("#grid").data("kendoGrid").dataSource.read(); 
-			},
-            }
+                complete: function(e) {
+                    	alert("wegingends update complete");
+                    	$("#grid").data("kendoGrid").dataSource.read();
+                },
+            },
         },
+        requestEnd: function (e) {
+            /*alert("wegingends requestend: " + e.type);*/
+        	if (e.type != "read") {
+            	// refresh the grid
+        	    e.sender.read();
+                /*$("#grid").data("kendoGrid").dataSource.read();*/
+    	    }
+	    },
         /*
         page: 1,
         pageSize: 11,*/

@@ -33,6 +33,36 @@
 
     kendo.culture("nl-NL")
     var url="http://clearweigh.gmt.nl/demo/";
+    
+    var afvalDataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: url + "afval",
+                jsonpCallback: "CallBackAfval",
+                type: "get",
+                dataType: "jsonp",
+                cache: true,
+             },
+        },
+        // describe the result format
+        schema: {
+			model: {
+                id: "afval_id",
+                fields: {
+                    afval_id:		{type: "number"},
+                    afval_code:		{type: "string"},
+                    afval_omschr: 	{type: "string"},
+                    prijs:			{type: "number"},
+                    afval_type_C1:  {type: "number", hidden: true},
+                    afval_type_C2:  {type: "number", hidden: true},
+                    afval_type_C3:  {type: "number", hidden: true},
+                },
+            },
+            
+        },
+    });
+    afvalDataSource.read();    
+
     var wegingenDataSource = new kendo.data.DataSource({
         transport: {
             read: {
@@ -53,56 +83,32 @@
 			},
             }
         },
+        /*
         page: 1,
-        pageSize: 11,
+        pageSize: 11,*/
         // describe the result format
         schema: {
 			model: {
                 id: "hiddenkey",
                 fields: {
-                    hiddenkey: 	{type: "number", hidden: true},
-                    bonnr: 		{type: "string"},
-                    postcode: 	{type: "string"},
-                    datum:		{type: "string"},
-                    afval:   	{type: "number", hidden: true},
-                    afval_type: {type: "string", hidden: true},
-                    quotum:     {type: "number"},
-                    inweging:   {type: "number"},
-                    straat:     {type: "string"},
-                    plaats:     {type: "string"},
-                    gemeente:   {type: "string"},
-                }
-            }            
-        },
+                    hiddenkey: 		{type: "number", hidden: true},
+                    bonnr: 			{type: "string"},
+                    postcode: 		{type: "string"},
+                    datum:			{type: "string"},
+                    afval:   		{type: "number", hidden: true},
+                    afval_type: 	{type: "string", hidden: true},
+                    afval_omschr: 	{type: "string"},
+                    afval_prijs:	{type: "number"},
+                    quotum:     	{type: "number"},
+                    inweging:   	{type: "number"},
+                    straat:     	{type: "string"},
+                    plaats:     	{type: "string"},
+                    gemeente:   	{type: "string"},
+                },
+            },
+    	},
     });    
 
-    var afvalDataSource = new kendo.data.DataSource({
-        transport: {
-            read: {
-                url: url + "afval",
-                jsonpCallback: "CallBackAfval",
-                type: "get",
-                dataType: "jsonp",
-                cache: false,
-             },
-        },
-        // describe the result format
-        schema: {
-			model: {
-                id: "afval_id",
-                fields: {
-                    afval_id:		{type: "number"},
-                    afval_code:		{type: "string"},
-                    afval_omschr: 	{type: "string"},
-                    prijs:			{type: "number"},
-                    afval_type_C1:  {type: "number", hidden: true},
-                    afval_type_C2:  {type: "number", hidden: true},
-                    afval_type_C3:  {type: "number", hidden: true},
-                }
-            }            
-        },
-    });
-    afvalDataSource.read();
 </script>    
     
     <!-- END_CUSTOM_CODE_kendoUiMobileApp -->

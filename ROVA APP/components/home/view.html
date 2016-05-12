@@ -19,7 +19,7 @@
   <tr><td><label>Adres:  	</label></td><td align="right">#=postcode#		</td><tr>
   <tr><td><label>     		</label></td><td align="right">#=gemeente#		</td><tr>
   <tr><td><label>     		</label></td><td align="right">#=straat#		</td><tr>
-  <tr><td><label>Tarief:	</label></td><td align="right" format: "{0:c}">&euro; #=afvalPrijs(afval)#</td><tr>
+  <tr><td><label>Tarief:	</label></td><td align="right" format: "{0:c}">&euro; #=afval_prijs#</td><tr>
   </table>
       <div class="k-edit-label">
         <label for="afval">Afval:</label>
@@ -37,7 +37,6 @@
     
 <script>
     
-    var afval=afvalDataSource.data();
     kendo.culture("nl-NL");
     
     function Refresh() {
@@ -52,13 +51,14 @@
             /*mobile: true,*/
 
             scrollable: false,
+            
             height: 430,
-
+/*
             pageable: {
                 refresh: true,
                 buttonCount: 3,
                 info: false,
-            },
+            },*/
             /*selectable: true,*/
 	        change: function() {   
                 var text = "";
@@ -108,14 +108,9 @@
                     width: 100,
                 }, 
                 {
-                    field: "afval",
-                    template: "#=afvalOmschr(afval)#",
-                    /*
-                    editor: afvalDropDownEditor,
-                    template: "#: afval ? afval.afval_omschr : null#",
-                    */
+                    field: "afval_omschr.substr(0,20)",
+                    width: "150px", 
                     title: "Afval",
-                    width: 150,
                 },
                 { 	command: [
                  		{ 	name: "edit",
@@ -155,21 +150,6 @@
             });
     };
     
-    function afvalOmschr(afval_id) {
-        for (var i = 0; i < afval.length; i++) {
-            if (afval[i].afval_id == afval_id) {
-                return afval[i].afval_omschr.substr(0, 20);
-            }
-        }
-    };
-    
-    function afvalPrijs(afval_id) {
-        for (var i = 0; i < afval.length; i++) {
-            if (afval[i].afval_id == afval_id) {
-                return afval[i].prijs;
-            }
-        }
-    };
 </script>
 <style>
 

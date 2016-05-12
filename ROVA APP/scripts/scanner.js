@@ -27,12 +27,15 @@
                     // success callback function
                     function (result) {
                         // wrapping in a timeout so the dialog doesn't free the app
+                        /*
                         setTimeout(function() {
                             alert("We got a barcode\n" +
                                   "Result: " + result.text + "\n" +
                                   "Format: " + result.format + "\n" +
                                   "Cancelled: " + result.cancelled);                            
                         }, 0);
+                        */
+                      	findWeging(result.text);
                     },
 
                     // error callback function

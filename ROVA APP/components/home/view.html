@@ -71,6 +71,8 @@
                 });
 
                 alert(text);
+                
+                
             },
             /*editable: {mode: "inline"},*/
             editable: {
@@ -92,6 +94,18 @@
     			},
             },
             edit: function(e) {
+/*                
+                var text = "";
+                var grid = this;                
+
+                grid.select().each(function() {
+                    var dataItem = grid.dataItem($(this));
+                    text += "ID: " + dataItem.id + "\n";
+                    text += "hiddenkey: " + dataItem.hiddenkey + "\n";
+                });
+
+                alert(text);
+*/                
 	        	initDropDownLists();
 /*
                 alert("edit");
@@ -120,6 +134,11 @@
                     width: 100,
                 }, 
                 {
+                    field: "afval_type",
+                    title: "#",
+                    width: 10,
+                }, 
+                {
                     field: "afval_omschr.substr(0,20)",
                     width: "150px", 
                     title: "Afval",
@@ -142,8 +161,12 @@
     });
     
     function initDropDownLists() {
+       
         /*alert("initDropDownLists");*/
         var afval = $("#afval").kendoDropDownList({
+            cascadeFrom: "grid",
+    		cascadeFromField: "afval_type",
+            
             optionLabel: "Select afval...",
             dataTextField: "afval_omschr",
             dataValueField: "afval_id",
@@ -161,6 +184,36 @@
                     dataSource: afvalDataSource
             });
     };
+    
+    function findWeging(hiddenkey) {
+		var bonnr
+        var view = kendo.data.Query.process(wegingenDataSource.data(), {
+                        filter: wegingenDataSource.filter(),
+                        sort: wegingenDataSource.sort()
+                    })
+                    .data;
+
+        var index = -1;
+        for (var x = 0; x < view.length; x++) {
+            if (view[x].hiddenkey == hiddenkey) {
+                index = x;
+                bonnr = view[x].bonnr
+                break;
+            }
+        }
+
+        if (index === -1) {
+            return;
+        }
+        alert("Weegbon gevonden\n" +
+              "Gelezen:: " + hiddenkey + "\n" +
+              "Regel: " + index + "\n" +
+              "Bonnr: " + bonnr);
+
+        var row = $("#grid").find("tr:eq(" + index + ")");
+        $("#grid").data("kendoGrid").select(row);
+
+	};
     
 </script>
 <style>

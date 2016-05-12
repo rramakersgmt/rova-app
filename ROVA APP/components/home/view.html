@@ -185,6 +185,7 @@
             });
     };
     
+
     function findWeging(hiddenkey) {
 		var bonnr
         var view = kendo.data.Query.process(wegingenDataSource.data(), {
@@ -205,14 +206,18 @@
         if (index === -1) {
             return;
         }
+        
+        index = index + 1;
+        
+/*
         alert("Weegbon gevonden\n" +
               "Gelezen:: " + hiddenkey + "\n" +
               "Regel: " + index + "\n" +
               "Bonnr: " + bonnr);
-
-        var row = $("#grid").find("tr:eq(" + index + ")");
-        $("#grid").data("kendoGrid").select(row);
-
+*/
+        var grid = $("#grid").data("kendoGrid");
+		grid.editRow($("#grid tr:eq(" + index + ")"));
+  
 	};
     
 </script>

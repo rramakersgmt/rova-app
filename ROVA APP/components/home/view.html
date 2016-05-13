@@ -2,12 +2,13 @@
 
     <!-- START_CUSTOM_CODE_home -->
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
-    <footer data-role="footer">
-		<button data-role="button" data-icon="camera" class="button" data-bind="click: scanBack">Scan barcode</button>
-		<button data-role="button" data-icon="refresh" class="button" onclick="Refresh()" style="float:right;">Refresh</button>
+<div id="grid"></div>
+    
+    <footer data-role="footer" >
+		<button class="k-button" id="btnScan"    data-icon="camera" data-bind="click: scanBack">Scan barcode</button>
+		<button class="k-button" id="btnRefresh" onclick="Refresh()" style="float:right;">Refresh</button>
     </footer>
    
-<div id="grid"></div>
 
 <script id="popup-editor" type="text/x-kendo-template">
 <div style="width: 250px; float:left; margin-left: 10px; margin-bottom: 5%; margin-right: 8%">
@@ -24,8 +25,8 @@
       <div class="k-edit-label">
         <label for="afval">Afval:</label>
     </div>
-    <div>
-	  	<input style="width: 180px"
+     <div class="demo-section k-dropdown">
+	  	<input style="width: 180px; height: 100"
         	id="afval"
     		name="afval" 
 			data-bind="value:afval" 
@@ -44,6 +45,16 @@
     };
 
     $(document).ready(function () {
+        
+        $("#btnRefresh").kendoButton({
+            icon: "refresh"
+        });
+
+        $("#btnScan").kendoButton({
+            icon: "search"
+        });
+
+        
         /* Grid */
         $("#grid").kendoGrid({
             dataSource: wegingenDataSource,
@@ -131,16 +142,11 @@
                 {
                     field: "bonnr",
                     title: "Bonnr",
-                    width: 100,
-                }, 
-                {
-                    field: "afval_type",
-                    title: "#",
-                    width: 10,
+                    width: "90px",
                 }, 
                 {
                     field: "afval_omschr.substr(0,20)",
-                    width: "150px", 
+                    width: "140px", 
                     title: "Afval",
                 },
                 { 	command: [
@@ -154,7 +160,7 @@
                         },
                     ], 
                  	title: "&nbsp;", 
-                 	width: "10px" 
+                 	width: "8px" 
                 },
             ]
         });
@@ -170,7 +176,7 @@
             optionLabel: "Select afval...",
             dataTextField: "afval_omschr",
             dataValueField: "afval_id",
-            dataSource: afvalDataSource
+            dataSource: afvalDataSource,
         }).data("kendoDropDownList");
     };
     
@@ -268,7 +274,16 @@
 {
     min-width: 0 !important;
 }    
-    
+                
+    .demo-section {
+                    line-height: 4em;
+                }
+                .demo-section .k-button {
+                    margin-right: 10px;
+                }
+                .k-button .k-image {
+                    height: 16px;
+                }    
 </style>    
    
     <!-- END_CUSTOM_CODE_home -->

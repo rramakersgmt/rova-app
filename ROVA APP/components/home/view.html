@@ -11,29 +11,25 @@
    
 
 <script id="popup-editor" type="text/x-kendo-template">
-<div style="width: 250px; float:left; margin-left: 10px; margin-bottom: 5%; margin-right: 8%">
-  <table>
-  <tr><td><label>Bonnr:  	</label></td><td align="right">#=bonnr#			</td><tr>
-  <tr><td><label>Datum:		</label></td><td align="right">#=datum#			</td><tr>
-  <tr><td><label>Gewicht:	</label></td><td align="right">#=inweging# kg	</td><tr>
-  <tr><td><label>Quotum: 	</label></td><td align="right">#=quotum# kg		</td><tr>
-  <tr><td><label>Adres:  	</label></td><td align="right">#=postcode#		</td><tr>
-  <tr><td><label>     		</label></td><td align="right">#=gemeente#		</td><tr>
-  <tr><td><label>     		</label></td><td align="right">#=straat#		</td><tr>
-  <tr><td><label>Tarief:	</label></td><td align="right" format: "{0:c}">&euro; #=afval_prijs#</td><tr>
-  </table>
-      <div class="k-edit-label">
-        <label for="afval">Afval:</label>
-    </div>
-     <div class="demo-section k-dropdown">
-	  	<input style="width: 180px; height: 100"
-        	id="afval"
-    		name="afval" 
-			data-bind="value:afval" 
-			data-role="dropdownlist" 
-        />
-    </div>
-  </div>
+    <div style="width: 250px; float:left; margin-left: 10px; margin-bottom: 5%; margin-right: 8%">
+        <table>
+        <tr><td><label>Bonnr:  	</label></td><td align="right">#=bonnr#			</td><tr>
+        <tr><td><label>Datum:		</label></td><td align="right">#=datum#			</td><tr>
+        <tr><td><label>Gewicht:	</label></td><td align="right">#=inweging# kg	</td><tr>
+        <tr><td><label>Quotum: 	</label></td><td align="right">#=quotum# kg		</td><tr>
+        <tr><td><label>Adres:  	</label></td><td align="right">#=postcode#		</td><tr>
+        <tr><td><label>     		</label></td><td align="right">#=gemeente#		</td><tr>
+        <tr><td><label>     		</label></td><td align="right">#=straat#		</td><tr>
+        <tr><td><label>Tarief:	</label></td><td align="right" format: "{0:c}">&euro; #=afval_prijs#</td><tr>
+        <tr><td><label>Type:	</label></td><td align="right"">
+            <input id="afvaltype" data-bind="value:afval_type" style="width: 60px;"/>
+    	</td><tr>
+        <tr><td><label>Afval:	</label></td><td align="right"">
+	        <input id="afval" 	  data-bind="value:afval"      style="width: 180px;"/>
+    	</td><tr>
+        </table>
+
+  	</div>
 </script>
     
 <script>
@@ -43,7 +39,7 @@
     function Refresh() {
         $("#grid").data("kendoGrid").dataSource.read();
     };
-
+    
     $(document).ready(function () {
         
         $("#btnRefresh").kendoButton({
@@ -54,6 +50,7 @@
             icon: "search"
         });
 
+
         
         /* Grid */
         $("#grid").kendoGrid({
@@ -63,7 +60,7 @@
 
             scrollable: false,
             
-            height: 430,
+            height: 420,
 /*
             pageable: {
                 refresh: true,
@@ -92,15 +89,15 @@
                 window : {
 			        title: "Weegbon",
                     
-                    width: "90%",
-                    height: "80%",
+                    width: "88%",
+                    height: "70%",
                     
                     draggable: false,
-                    modal: true,
+                    /*modal: true,*/
                     pinned: false,
                     position: {
-                        top: "1px",
-                        left: "1px"
+                        top: "5px",
+                        left: "5px"
                     },
     			},
             },
@@ -167,17 +164,24 @@
     });
     
     function initDropDownLists() {
-       
-        /*alert("initDropDownLists");*/
+        var afvaltype = $("#afvaltype").kendoDropDownList({
+            dataSource: [
+                { afval_type: "C1" },
+                { afval_type: "C2" },
+                { afval_type: "C3" }
+            ],
+            dataValueField: "afval_type",
+            dataTextField: "afval_type",
+            enable: false,
+        }).data("kendoDropDownList");
+        
         var afval = $("#afval").kendoDropDownList({
-            cascadeFrom: "grid",
-    		cascadeFromField: "afval_type",
-            
-            optionLabel: "Select afval...",
+            cascadeFrom: "afvaltype",
             dataTextField: "afval_omschr",
             dataValueField: "afval_id",
             dataSource: afvalDataSource,
         }).data("kendoDropDownList");
+        
     };
     
     /* Wordt alleen gebruikt bij inline edit mode */

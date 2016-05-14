@@ -6,32 +6,13 @@
       "name": "home",
       "components": [],
       "title": "Wegingen",
-      "addToNavigation": true,
-      "icon": "home"
-    },
-    {
-      "type": "kendo-ui-mobile:view",
-      "name": "weging",
-      "components": [],
-      "title": "Weging",
-      "addToNavigation": true,
-      "icon": "home"
-    },
-    {
-      "type": "kendo-ui-mobile:view",
-      "name": "scan",
-      "components": [],
-      "title": "Scan",
-      "addToNavigation": true,
-      "icon": "home"
+      "addToNavigation": false
     }
   ],
   "dataProviders": [],
   "name": "kendoUiMobileApp",
-  "navigation": "tabstrip",
+  "navigation": "none",
   "view": "home",
-  "transition": "slide",
-  "showMoreTab": false,
   "skin": "nova",
   "skinMainColor": "#32364c",
   "skinTextColor": "#ffffff",

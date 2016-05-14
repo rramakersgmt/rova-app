@@ -22,14 +22,11 @@
 
 <body id="kendoUiMobileApp">
     <script src="components/home/index.js"></script>
-    <script src="kendo/js/kendo.culture.nl-NL.js"></script>
     <script src="scripts/scanner.js"></script>
 
     <!-- START_CUSTOM_CODE_kendoUiMobileApp -->
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
 <script>
-
-    kendo.culture("nl-NL")
     var url="http://clearweigh.gmt.nl/demo/";
     
     var afvalDataSource = new kendo.data.DataSource({
@@ -57,13 +54,11 @@
             
         },
     });
-    afvalDataSource.read();    
 
     var wegingenDataSource = new kendo.data.DataSource({
         transport: {
             read: {
                 url: url + "wegingen",
-                /*url: "wegingen.jsonp",*/
                 jsonpCallback: "CallBackWegingen",
                 type: "get",
                 dataType: "jsonp",
@@ -74,23 +69,14 @@
                 type: "get",
                 dataType: "jsonp",
                 jsonpCallback: "CallBackWegingUpdate",
-                complete: function(e) {
-                    	alert("wegingends update complete");
-                    	$("#grid").data("kendoGrid").dataSource.read();
-                },
             },
         },
         requestEnd: function (e) {
-            /*alert("wegingends requestend: " + e.type);*/
         	if (e.type != "read") {
             	// refresh the grid
         	    e.sender.read();
-                /*$("#grid").data("kendoGrid").dataSource.read();*/
     	    }
 	    },
-        /*
-        page: 1,
-        pageSize: 11,*/
         // describe the result format
         schema: {
 			model: {

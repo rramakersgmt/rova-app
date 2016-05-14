@@ -14,12 +14,12 @@
     <div style="width: 250px; float:left; margin-left: 10px; margin-bottom: 5%; margin-right: 8%">
         <table>
         <tr><td><label>Bonnr:  	</label></td><td align="right">#=bonnr#			</td><tr>
-        <tr><td><label>Datum:		</label></td><td align="right">#=datum#			</td><tr>
+        <tr><td><label>Datum:	</label></td><td align="right">#=datum#			</td><tr>
         <tr><td><label>Gewicht:	</label></td><td align="right">#=inweging# kg	</td><tr>
         <tr><td><label>Quotum: 	</label></td><td align="right">#=quotum# kg		</td><tr>
         <tr><td><label>Adres:  	</label></td><td align="right">#=postcode#		</td><tr>
-        <tr><td><label>     		</label></td><td align="right">#=gemeente#		</td><tr>
-        <tr><td><label>     		</label></td><td align="right">#=straat#		</td><tr>
+        <tr><td><label>     	</label></td><td align="right">#=gemeente#		</td><tr>
+        <tr><td><label>     	</label></td><td align="right">#=straat#		</td><tr>
         <tr><td><label>Tarief:	</label></td><td align="right" format: "{0:c}">&euro; #=afval_prijs#</td><tr>
         <tr><td><label>Type:	</label></td><td align="right"">
             <input id="afvaltype" data-bind="value:afval_type" style="width: 60px;"/>
@@ -49,40 +49,14 @@
         $("#btnScan").kendoButton({
             icon: "search"
         });
-
-
         
         /* Grid */
         $("#grid").kendoGrid({
             dataSource: wegingenDataSource,
             sortable: true,
-            /*mobile: true,*/
 
             scrollable: false,
-            
-/*
-            height: 420,
-            pageable: {
-                refresh: true,
-                buttonCount: 3,
-                info: false,
-            },*/
-            /*selectable: true,*/
-	        change: function() {   
-                var text = "";
-                var grid = this;                
 
-                grid.select().each(function() {
-                    var dataItem = grid.dataItem($(this));
-                    text += "ID: " + dataItem.id + "\n";
-                    text += "hiddenkey: " + dataItem.hiddenkey + "\n";
-                });
-
-                alert(text);
-                
-                
-            },
-            /*editable: {mode: "inline"},*/
             editable: {
                 mode: "popup",
                 template: kendo.template($("#popup-editor").html()),
@@ -94,33 +68,9 @@
     			},
             },
             edit: function(e) {
-/*                
-                var text = "";
-                var grid = this;                
-
-                grid.select().each(function() {
-                    var dataItem = grid.dataItem($(this));
-                    text += "ID: " + dataItem.id + "\n";
-                    text += "hiddenkey: " + dataItem.hiddenkey + "\n";
-                });
-
-                alert(text);
-*/                
 	        	initDropDownLists();
                 $(e.container).data("kendoWindow").maximize();
-/*
-                alert("edit");
-            	
-                $(e.container).find("input[name='afval']")
-                $(e.container).data("kendoAutoComplete")
-                $(e.container).bind("change", function(e) {alert("edit changed");});
-*/                
         	},
-            /*
-            edit: function (e) {
-          	  initDropDownLists();
-        	},
-            */
             autoBind: true,
 	        dataBinding: function() {   
                 /*alert("dataBinding");*/
@@ -177,18 +127,6 @@
         
     };
     
-    /* Wordt alleen gebruikt bij inline edit mode */
-    function afvalDropDownEditor(container, options) {
-          $('<input required name="' + options.field + '"/>')
-                .appendTo(container)
-                .kendoDropDownList({
-                    dataTextField: "afval_omschr.substr(0,14)",
-                    dataValueField: "afval_id",
-                    dataSource: afvalDataSource
-            });
-    };
-    
-
     function findWeging(hiddenkey) {
 		var bonnr
         var view = kendo.data.Query.process(wegingenDataSource.data(), {
@@ -212,12 +150,6 @@
         
         index = index + 1;
         
-/*
-        alert("Weegbon gevonden\n" +
-              "Gelezen:: " + hiddenkey + "\n" +
-              "Regel: " + index + "\n" +
-              "Bonnr: " + bonnr);
-*/
         var grid = $("#grid").data("kendoGrid");
 		grid.editRow($("#grid tr:eq(" + index + ")"));
   
@@ -248,39 +180,12 @@
     text-align: left;
 }
 
-/*
-    Increase the width of the textbox containers. The default one is 60%.
-    The sum of label and editor percentage widths should be around 90%, to make up for existing paddings.
-*/
-.k-popup-edit-form .k-edit-field
-{
-    width: 70%;
-}
-
-/*
-    Expand the edit textboxes and any other Kendo UI widgets.
-    In case of unexpected side effects, use widget-specific classes, instead of .k-widget.
-*/
-.k-popup-edit-form .k-edit-field > .k-textbox,
-.k-popup-edit-form .k-edit-field > .k-widget
-{
-    width: 98%;
-}
-
 .k-grid .k-button
 {
     min-width: 0 !important;
 }    
                 
-    .demo-section {
-                    line-height: 4em;
-                }
-                .demo-section .k-button {
-                    margin-right: 10px;
-                }
-                .k-button .k-image {
-                    height: 16px;
-                }    
+
 </style>    
    
     <!-- END_CUSTOM_CODE_home -->

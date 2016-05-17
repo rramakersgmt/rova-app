@@ -27,7 +27,14 @@
     <!-- START_CUSTOM_CODE_kendoUiMobileApp -->
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
 <script>
-    var url="http://clearweigh.gmt.nl/demo/";
+    if (localStorage["app_data"] == undefined) {
+        var appData = [
+        	{id: 1, login:"", password: "", server: "http://clearweigh.gmt.nl/demo/"}
+        ];
+        localStorage["app_data"] = JSON.stringify(appData);
+    }
+    var appLocalData = JSON.parse(localStorage["app_data"]);
+    var url=appLocalData[0].server;
     
     var afvalDataSource = new kendo.data.DataSource({
         transport: {

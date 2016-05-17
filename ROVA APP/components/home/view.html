@@ -4,10 +4,46 @@
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
 <div id="grid"></div>
     
-    <footer data-role="footer" >
-		<button class="k-button" id="btnScan"    data-icon="camera" data-bind="click: scanBack">Scan barcode</button>
-		<button class="k-button" id="btnRefresh" onclick="Refresh()" style="float:right;">Refresh</button>
-    </footer>
+<div id="appLogin" style="display:none">
+    <form data-bind="events: { keyup: checkEnter }">
+        <h3>Server:</h3>
+        <ul data-role="listview" data-style="inset">
+            <li>
+                <label>
+                    <div>Server</div>
+                    <input id= "appServer" type="text" data-bind="value:appServer" />
+                </label>
+            </li>
+        </ul>
+
+        <h3>Login gegevens:</h3>
+        <ul data-role="listview" data-style="inset">
+            <li>
+                <label>
+                    <div>Username</div>
+                    <input type="text" data-bind="value:appLogin" />
+                </label>
+            </li>
+            <li>
+                <label>
+                    <div>Password</div>
+                    <input type="password" data-bind="value:appPassword" />
+                </label>
+            </li>
+        </ul>
+        
+        <footer data-role="footer" >
+                <input id="login" type="submit" data-role="button" data-bind="click: onLogin, invisible: isLoggedIn" value="Login" class="login-button" />
+                <input id="logout" type="submit" data-role="button" data-bind="click: onLogout, visible: isLoggedIn" value="Logout" class="login-button" />
+        </footer>
+    </form>
+</div>      
+    
+<footer data-role="footer" >
+    <button class="k-button" id="btnScan"    data-icon="camera" data-bind="click: scanBack">Scan barcode</button>
+	<button class="k-button" id="btnSettings" style="float:center;">Settings</button>
+    <button class="k-button" id="btnRefresh" onclick="Refresh()" style="float:right;">Refresh</button>
+</footer>
    
 
 <script id="popup-editor" type="text/x-kendo-template">
@@ -33,8 +69,22 @@
 </script>
     
 <script>
-    
-    kendo.culture("nl-NL");
+    $("#appLogin").kendoWindow({
+        modal: true,
+        title: "Settings",
+        visible: false,
+        maximize: true
+    });
+
+    $("#btnSettings").click(function () {
+        $("#appLogin").data("kendoWindow").open();
+        /*
+        appServer=appLocalData[0].server;
+        var appLogin=appLocalData[0].login;
+        var appPassword=appLocalData[0].password;
+        */
+        $("#appLogin").data("kendoWindow").maximize();
+    });
     
     function Refresh() {
         $("#grid").data("kendoGrid").dataSource.read();
@@ -44,6 +94,10 @@
         
         $("#btnRefresh").kendoButton({
             icon: "refresh"
+        });
+        
+        $("#btnSettings").kendoButton({
+            icon: "more"
         });
 
         $("#btnScan").kendoButton({

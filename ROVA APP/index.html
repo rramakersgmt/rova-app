@@ -29,10 +29,11 @@
 <script>
     if (localStorage["app_data"] == undefined) {
         var appData = [
-        	{id: 1, login:"", password: "", server: "http://clearweigh.gmt.nl/demo/"}
+        	{id: 0, login:"super", password: "super", server: "http://clearweigh.gmt.nl/demo/"}
         ];
         localStorage["app_data"] = JSON.stringify(appData);
     }
+    
     var appLocalData = JSON.parse(localStorage["app_data"]);
     var url=appLocalData[0].server;
     

@@ -3,40 +3,25 @@
     <!-- START_CUSTOM_CODE_home -->
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
 <div id="grid"></div>
-    
-<div id="appLogin" style="display:none">
-    <form data-bind="events: { keyup: checkEnter }">
-        <h3>Server:</h3>
-        <ul data-role="listview" data-style="inset">
-            <li>
-                <label>
-                    <div>Server</div>
-                    <input id= "appServer" type="text" data-bind="value:appServer" />
-                </label>
-            </li>
-        </ul>
 
-        <h3>Login gegevens:</h3>
-        <ul data-role="listview" data-style="inset">
-            <li>
-                <label>
-                    <div>Username</div>
-                    <input type="text" data-bind="value:appLogin" />
-                </label>
-            </li>
-            <li>
-                <label>
-                    <div>Password</div>
-                    <input type="password" data-bind="value:appPassword" />
-                </label>
-            </li>
+<div id="appSettings" style="display:none" class="demo-section k-content wide">
+	<div>
+    	<ul class="fieldlist" style="padding-left: 0px;">
+            <h3>Server</h3> 
+            <input type="text" data-bind="value:appServer" class="k-textbox" style="width:300px;"/>
+            <h3>Login</h3> 
+            <input type="text" data-bind="value:appLogin" class="k-textbox" />
+            <h3>Wachtwoord</h3> 
+            <input type="text" data-bind="value:appPassword" class="k-textbox" />
         </ul>
-        
-        <footer data-role="footer" >
-                <input id="login" type="submit" data-role="button" data-bind="click: onLogin, invisible: isLoggedIn" value="Login" class="login-button" />
-                <input id="logout" type="submit" data-role="button" data-bind="click: onLogout, visible: isLoggedIn" value="Logout" class="login-button" />
-        </footer>
-    </form>
+    </div>
+
+    <footer data-role="footer" >
+        <input id="login" type="submit" data-role="button" data-bind="click: onLogin, invisible: isLoggedIn" value="Login" class="login-button" />
+        <input id="logout" type="submit" data-role="button" data-bind="click: onLogout, visible: isLoggedIn" value="Logout" class="login-button" />
+        <input id="save" type="submit" data-role="button" onclick="Save()" value="Opslaan" class="save-button" />
+        <button class="k-button" id="btnSave" onclick="Save()">Save</button>
+    </footer>
 </div>      
     
 <footer data-role="footer" >
@@ -69,29 +54,34 @@
 </script>
     
 <script>
-    $("#appLogin").kendoWindow({
-        modal: true,
+    appSettingsWindow = $("#appSettings").kendoWindow({
+    	modal: true,
         title: "Settings",
         visible: false,
-        maximize: true
-    });
+    }).data("kendoWindow");
 
     $("#btnSettings").click(function () {
-        $("#appLogin").data("kendoWindow").open();
-        /*
-        appServer=appLocalData[0].server;
-        var appLogin=appLocalData[0].login;
-        var appPassword=appLocalData[0].password;
-        */
-        $("#appLogin").data("kendoWindow").maximize();
+        $("#appSettings").data("kendoWindow").open();
+        $("#appSettings").data("kendoWindow").maximize();
     });
     
     function Refresh() {
         $("#grid").data("kendoGrid").dataSource.read();
     };
     
+    function Save() {
+        alert(appServer);
+    }
+    
     $(document).ready(function () {
-        
+        var viewModel = kendo.observable({
+            appServer: 		appLocalData[0].server,
+            appLogin: 		appLocalData[0].login,
+            appPassword: 	appLocalData[0].password,
+        });
+
+        kendo.bind($("#appSettings"), viewModel);
+
         $("#btnRefresh").kendoButton({
             icon: "refresh"
         });

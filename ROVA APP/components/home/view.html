@@ -8,19 +8,18 @@
 	<div>
     	<ul class="fieldlist" style="padding-left: 0px;">
             <h3>Server</h3> 
-            <input type="text" data-bind="value:appServer" class="k-textbox" style="width:300px;"/>
+            <input id="server" 	 type="text" data-bind="value:server" 	class="k-textbox" style="width:300px;"/>
             <h3>Login</h3> 
-            <input type="text" data-bind="value:appLogin" class="k-textbox" />
+            <input id="login" 	 type="text" data-bind="value:login" 	class="k-textbox" />
             <h3>Wachtwoord</h3> 
-            <input type="text" data-bind="value:appPassword" class="k-textbox" />
+            <input id="password" type="text" data-bind="value:password" class="k-textbox" />
         </ul>
     </div>
 
     <footer data-role="footer" >
-        <input id="login" type="submit" data-role="button" data-bind="click: onLogin, invisible: isLoggedIn" value="Login" class="login-button" />
-        <input id="logout" type="submit" data-role="button" data-bind="click: onLogout, visible: isLoggedIn" value="Logout" class="login-button" />
-        <input id="save" type="submit" data-role="button" onclick="Save()" value="Opslaan" class="save-button" />
-        <button class="k-button" id="btnSave" onclick="Save()">Save</button>
+        <input  id="login"   type="submit" data-role="button" data-bind="click: onLogin, invisible: isLoggedIn" value="Login" class="login-button" />
+        <input  id="logout"  type="submit" data-role="button" data-bind="click: onLogout, visible: isLoggedIn" value="Logout" class="login-button" />
+        <button id="btnSave" data-bind="click: save" type="button" class="k-button">Opslaan</button>
     </footer>
 </div>      
     
@@ -64,20 +63,34 @@
         $("#appSettings").data("kendoWindow").open();
         $("#appSettings").data("kendoWindow").maximize();
     });
-    
+    /*
+    $("#btnSave").click(function () {
+        alert(appLocalData[0].login);
+        alert($('#inputLogin').data('').value());
+        alert(appLogin);
+        var localData = JSON.parse(localStorage["app_data"]);
+        localData[1].login = options.data.login;
+        localData[1].password = options.data.password;
+        localData[1].server = options.data.server;
+        localStorage["app_data"] = JSON.stringify(localData);
+        options.success(options.data);
+    });
+    */
     function Refresh() {
         $("#grid").data("kendoGrid").dataSource.read();
     };
     
-    function Save() {
-        alert(appServer);
-    }
-    
     $(document).ready(function () {
         var viewModel = kendo.observable({
-            appServer: 		appLocalData[0].server,
-            appLogin: 		appLocalData[0].login,
-            appPassword: 	appLocalData[0].password,
+            server: 	appLocalData[0].server,
+            login: 		appLocalData[0].login,
+            password:	appLocalData[0].password,
+            save: function(e) {         
+                appLocalData[0].server   = this.get("server");
+                appLocalData[0].login    = this.get("login");
+                appLocalData[0].password = this.get("password");
+                localStorage["app_data"] = JSON.stringify(appLocalData);
+            }
         });
 
         kendo.bind($("#appSettings"), viewModel);

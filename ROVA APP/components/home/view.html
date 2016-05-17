@@ -8,18 +8,19 @@
 	<div>
     	<ul class="fieldlist" style="padding-left: 0px;">
             <h3>Server</h3> 
-            <input id="server" 	 type="text" data-bind="value:server" 	class="k-textbox" style="width:300px;"/>
+            <input id="fldserver" 	type="text" data-bind="value:fldserver" 	class="k-textbox" style="width:300px;"/>
             <h3>Login</h3> 
-            <input id="login" 	 type="text" data-bind="value:login" 	class="k-textbox" />
+            <input id="fldlogin" 	type="text" data-bind="value:fldlogin" 	class="k-textbox" />
             <h3>Wachtwoord</h3> 
-            <input id="password" type="text" data-bind="value:password" class="k-textbox" />
+            <input id="fldpassword" type="text" data-bind="value:fldpassword" class="k-textbox" />
         </ul>
     </div>
 
     <footer data-role="footer" >
-        <input  id="login"   type="submit" data-role="button" data-bind="click: onLogin, invisible: isLoggedIn" value="Login" class="login-button" />
-        <input  id="logout"  type="submit" data-role="button" data-bind="click: onLogout, visible: isLoggedIn" value="Logout" class="login-button" />
+        <input  id="btnlogin"   type="submit" data-role="button" data-bind="click: onLogin, invisible: isLoggedIn" class="login-button" />
+        <input  id="btnlogout"  type="submit" data-role="button" data-bind="click: onLogout, visible: isLoggedIn" class="login-button" />
         <button id="btnSave" data-bind="click: save" type="button" class="k-button">Opslaan</button>
+        <button id="btnClose" data-bind="click: close" type="button" class="k-button">Sluit</button>
     </footer>
 </div>      
     
@@ -82,15 +83,23 @@
     
     $(document).ready(function () {
         var viewModel = kendo.observable({
-            server: 	appLocalData[0].server,
-            login: 		appLocalData[0].login,
-            password:	appLocalData[0].password,
+            fldserver: 	appLocalData[0].server,
+            fldlogin:	appLocalData[0].login,
+            fldpassword:appLocalData[0].password,
             save: function(e) {         
-                appLocalData[0].server   = this.get("server");
-                appLocalData[0].login    = this.get("login");
-                appLocalData[0].password = this.get("password");
+                appLocalData[0].server   = this.get("fldserver");
+                appLocalData[0].login    = this.get("fldlogin");
+                appLocalData[0].password = this.get("fldpassword");
                 localStorage["app_data"] = JSON.stringify(appLocalData);
-            }
+                $("#appSettings").data("kendoWindow").close(); 
+            },
+            close: function(e) {         
+                $("#appSettings").data("kendoWindow").close(); 
+            },
+            login: function(e) {         
+            },
+            logoff: function(e) {         
+            },
         });
 
         kendo.bind($("#appSettings"), viewModel);

@@ -29,21 +29,28 @@
 <script>
     if (localStorage["app_data"] == undefined) {
         var appData = [
-        	{id: 0, login:"super", password: "super", server: "http://clearweigh.gmt.nl/demo/"}
+        	{
+                id: 0, 
+             	login:"super", 
+                password: "super", 
+                server: "http://clearweigh.gmt.nl/demo/",
+                sid: ""
+            }
         ];
         localStorage["app_data"] = JSON.stringify(appData);
-    }
+    };
     
     var appLocalData = JSON.parse(localStorage["app_data"]);
-    var url=appLocalData[0].server;
-        
+    var url=appLocalData[0].server; 
+
     var afvalDataSource = new kendo.data.DataSource({
         transport: {
             read: {
                 url: url + "afval",
-                jsonpCallback: "CallBackAfval",
+                data: {sid: appLocalData[0].sid},
+                /*jsonpCallback: "CallBackAfval",*/
                 type: "get",
-                dataType: "jsonp",
+                dataType: "json",
                 cache: true,
              },
         },
@@ -67,22 +74,23 @@
         transport: {
             read: {
                 url: url + "wegingen",
-                jsonpCallback: "CallBackWegingen",
+                /*jsonpCallback: "CallBackWegingen",*/
                 type: "get",
-                dataType: "jsonp",
+                data: {sid: appLocalData[0].sid},
+                dataType: "json",
                 cache: false,
             },
             update: {
                 url: url + "wegingupdate",
                 type: "get",
-                dataType: "jsonp",
-                jsonpCallback: "CallBackWegingUpdate",
+                dataType: "json",
+                /*jsonpCallback: "CallBackWegingUpdate",*/
             },
         },
         requestEnd: function (e) {
         	if (e.type != "read") {
             	// refresh the grid
-        	    e.sender.read();
+        	    e.sender.read({sid: appLocalData[0].sid});
     	    }
 	    },
         // describe the result format

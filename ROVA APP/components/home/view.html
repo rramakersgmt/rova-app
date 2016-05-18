@@ -2,7 +2,7 @@
 
     <!-- START_CUSTOM_CODE_home -->
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
-<div id="grid"></div>
+<div id="grid" data-reload="true"></div>
 
 <div id="appSettings" style="display:none" class="demo-section k-content wide">
 	<div>
@@ -17,10 +17,12 @@
     </div>
 
     <footer data-role="footer" >
-        <input  id="btnlogin"   type="submit" data-role="button" data-bind="click: onLogin, invisible: isLoggedIn" class="login-button" />
-        <input  id="btnlogout"  type="submit" data-role="button" data-bind="click: onLogout, visible: isLoggedIn" class="login-button" />
-        <button id="btnSave" data-bind="click: save" type="button" class="k-button">Opslaan</button>
-        <button id="btnClose" data-bind="click: close" type="button" class="k-button">Sluit</button>
+        <button id="btnlogin"  type="button" class="k-button" data-bind="click: login,  invisible: isLoggedIn">Login</button>
+        <button id="btnlogout" type="button" class="k-button" data-bind="click: logout,   visible: isLoggedIn">Logout</button>
+        <!--button id="btnlogin"  type="button" class="k-button" data-bind="click: login">Login</button>
+        <button id="btnlogout" type="button" class="k-button" data-bind="click: logout">Logout</button-->
+        <button id="btnSave"   type="button" class="k-button" data-bind="click: save"                         >Opslaan</button>
+        <button id="btnClose"  type="button" class="k-button" data-bind="click: close"                        >Sluit</button>
     </footer>
 </div>      
     
@@ -64,21 +66,9 @@
         $("#appSettings").data("kendoWindow").open();
         $("#appSettings").data("kendoWindow").maximize();
     });
-    /*
-    $("#btnSave").click(function () {
-        alert(appLocalData[0].login);
-        alert($('#inputLogin').data('').value());
-        alert(appLogin);
-        var localData = JSON.parse(localStorage["app_data"]);
-        localData[1].login = options.data.login;
-        localData[1].password = options.data.password;
-        localData[1].server = options.data.server;
-        localStorage["app_data"] = JSON.stringify(localData);
-        options.success(options.data);
-    });
-    */
+
     function Refresh() {
-        $("#grid").data("kendoGrid").dataSource.read();
+        $("#grid").data("kendoGrid").dataSource.read({sid: appLocalData[0].sid});
     };
     
     $(document).ready(function () {
@@ -95,11 +85,65 @@
             },
             close: function(e) {         
                 $("#appSettings").data("kendoWindow").close(); 
+                //$("#appSettings").data("kendoWindow").refresh(appLocalData); 
             },
-            login: function(e) {         
+            login: function(e) {
+                var url=this.get("fldserver"); 
+                var logindata= {usr: this.get("fldlogin"), pwd: this.get("fldpassword")};
+            	
+                $.ajax({
+					type: "POST",
+                    url: url + "login",
+                    dataType: "json",
+                    timeout: 2000,
+                    data: logindata,
+                    statusCode: {/*
+                    	401:function() { 
+                            appLocalData[0].sid = "";
+			                localStorage["app_data"] = JSON.stringify(appLocalData);
+                            alert("Niet geautoriseerd\nLogin/Wachtwoord onjuist"); 
+                        },
+                        404:function() { 
+                            appLocalData[0].sid = "";
+			                localStorage["app_data"] = JSON.stringify(appLocalData);
+    						alert("Server niet gevonden"); 
+                        },*/
+                        200:function(data) { 
+                            appLocalData[0].sid 	 = data[0].sid;
+			                localStorage["app_data"] = JSON.stringify(appLocalData);
+                            alert("Ingelogd"); 
+			            },
+                  	},
+                    //complete: function(httpObj, textStatus, data){},
+                    error: function (parsedjson, textStatus, errorThrown) {
+                        appLocalData[0].sid = "";
+                        localStorage["app_data"] = JSON.stringify(appLocalData);
+                        alert(parsedjson.statusText);
+                    },
+                    async: false
+                });
+                viewModel.set("isLoggedIn", (appLocalData[0].sid != ""));
             },
-            logoff: function(e) {         
+            logout: function(e) {         
+                appLocalData[0].sid = "";
+                localStorage["app_data"] = JSON.stringify(appLocalData);
+                
+				var url=this.get("fldserver"); 
+            	
+                $.ajax({
+					type: "GET",
+                    url: url + "logout",
+                    statusCode: {
+                        404:function() { alert("Server niet gevonden"); },
+                        200:function() { alert("Uitgelogd"); },
+                  	},
+                    async: false
+                });
+                viewModel.set("isLoggedIn", (appLocalData[0].sid != ""));
             },
+            isLoggedIn: function() {
+                return (appLocalData[0].sid != "");
+            }
         });
 
         kendo.bind($("#appSettings"), viewModel);
@@ -194,7 +238,6 @@
     };
     
     function findWeging(hiddenkey) {
-		var bonnr
         var view = kendo.data.Query.process(wegingenDataSource.data(), {
                         filter: wegingenDataSource.filter(),
                         sort: wegingenDataSource.sort()
@@ -205,7 +248,6 @@
         for (var x = 0; x < view.length; x++) {
             if (view[x].hiddenkey == hiddenkey) {
                 index = x;
-                bonnr = view[x].bonnr
                 break;
             }
         }

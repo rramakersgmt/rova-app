@@ -21,11 +21,75 @@
 </head>
 
 <body id="kendoUiMobileApp">
-    <script src="components/home/index.js"></script>
-    <script src="scripts/scanner.js"></script>
+
+<script src="components/home/index.js"></script>
+<script src="scripts/scanner.js"></script>
 
     <!-- START_CUSTOM_CODE_kendoUiMobileApp -->
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
+    
+<div
+    data-reload="true" 
+    data-role="view" 
+    data-title="Wegingen" 
+	data-layout="main" 
+    data-model="app.demoService.viewModel" 
+    data-show="app.home.onShow" 
+    data-after-show="app.home.afterShow"
+>
+
+<script id="popup-editor" type="text/x-kendo-template">
+    <div style="width: 250px; float:left; margin-left: 10px; margin-bottom: 5%; margin-right: 8%">
+        <table>
+        <tr><td><label>Bonnr:  	</label></td><td align="right">#=bonnr#			</td><tr>
+        <tr><td><label>Datum:	</label></td><td align="right">#=datum#			</td><tr>
+        <tr><td><label>Gewicht:	</label></td><td align="right">#=inweging# kg	</td><tr>
+        <tr><td><label>Quotum: 	</label></td><td align="right">#=quotum# kg		</td><tr>
+        <tr><td><label>Adres:  	</label></td><td align="right">#=postcode#		</td><tr>
+        <tr><td><label>     	</label></td><td align="right">#=gemeente#		</td><tr>
+        <tr><td><label>     	</label></td><td align="right">#=straat#		</td><tr>
+        <tr><td><label>Tarief:	</label></td><td align="right" format: "{0:c}">&euro; #=afval_prijs#</td><tr>
+        <tr><td><label>Type:	</label></td><td align="right"">
+            <input id="afvaltype" data-bind="value:afval_type" style="width: 60px;"/>
+    	</td><tr>
+        <tr><td><label>Afval:	</label></td><td align="right"">
+	        <input id="afval" 	  data-bind="value:afval"      style="width: 180px;"/>
+    	</td><tr>
+        </table>
+
+  	</div>
+</script>
+    
+<div id="appSettings" style="display:none" class="demo-section k-content wide">
+	<div>
+    	<ul class="fieldlist" style="padding-left: 0px;">
+            <h3>Server</h3> 
+            <input id="fldserver" 	type="text" data-bind="value:fldserver" 	class="k-textbox" style="width:300px;"/>
+            <h3>Login</h3> 
+            <input id="fldlogin" 	type="text" data-bind="value:fldlogin" 	class="k-textbox" />
+            <h3>Wachtwoord</h3> 
+            <input id="fldpassword" type="text" data-bind="value:fldpassword" class="k-textbox" />
+        </ul>
+    </div>
+
+    <footer data-role="footer" >
+        <button id="btnlogin"  type="button" class="k-button" data-bind="click: login,  invisible: isLoggedIn">Login</button>
+        <button id="btnlogout" type="button" class="k-button" data-bind="click: logout,   visible: isLoggedIn">Logout</button>
+        <button id="btnSave"   type="button" class="k-button" data-bind="click: save"                         >Opslaan</button>
+        <button id="btnClose"  type="button" class="k-button" data-bind="click: close"                        >Sluit</button>
+    </footer>
+</div>          
+
+<footer data-role="footer">
+    <!--div data-role="tabstrip" id="navigation-container"-->
+        <button class="k-button" id="btnScan"    data-icon="camera" data-bind="click: scanBack">Scan barcode</button>
+        <button class="k-button" id="btnSettings" style="float:center;">Settings</button>
+        <button class="k-button" id="btnRefresh" onclick="Refresh()" style="float:right;">Refresh</button>
+    <!--div-->
+</footer>
+    
+<div id="grid" data-reload="true"></div>
+    
 <script>
     if (localStorage["app_data"] == undefined) {
         var appData = [
@@ -116,8 +180,247 @@
     	},
     });    
 
-</script>    
+    appSettingsWindow = $("#appSettings").kendoWindow({
+    	modal: true,
+        title: "Settings",
+        visible: false,
+    }).data("kendoWindow");
+
+    $("#btnSettings").click(function () {
+        $("#appSettings").data("kendoWindow").open();
+        $("#appSettings").data("kendoWindow").maximize();
+    });
+
+    function Refresh() {
+        $("#grid").data("kendoGrid").dataSource.read({sid: appLocalData[0].sid});
+    };
     
+    $(document).ready(function () {
+        var viewModel = kendo.observable({
+            fldserver: 	appLocalData[0].server,
+            fldlogin:	appLocalData[0].login,
+            fldpassword:appLocalData[0].password,
+            save: function(e) {         
+                appLocalData[0].server   = this.get("fldserver");
+                appLocalData[0].login    = this.get("fldlogin");
+                appLocalData[0].password = this.get("fldpassword");
+                localStorage["app_data"] = JSON.stringify(appLocalData);
+                $("#appSettings").data("kendoWindow").close(); 
+            },
+            close: function(e) {         
+                $("#appSettings").data("kendoWindow").close(); 
+                //$("#appSettings").data("kendoWindow").refresh(appLocalData); 
+            },
+            login: function(e) {
+                var url=this.get("fldserver"); 
+                var logindata= {usr: this.get("fldlogin"), pwd: this.get("fldpassword")};
+            	
+                $.ajax({
+					type: "POST",
+                    url: url + "login",
+                    dataType: "json",
+                    timeout: 2000,
+                    data: logindata,
+                    statusCode: {/*
+                    	401:function() { 
+                            appLocalData[0].sid = "";
+			                localStorage["app_data"] = JSON.stringify(appLocalData);
+                            alert("Niet geautoriseerd\nLogin/Wachtwoord onjuist"); 
+                        },
+                        404:function() { 
+                            appLocalData[0].sid = "";
+			                localStorage["app_data"] = JSON.stringify(appLocalData);
+    						alert("Server niet gevonden"); 
+                        },*/
+                        200:function(data) { 
+                            appLocalData[0].sid 	 = data[0].sid;
+			                localStorage["app_data"] = JSON.stringify(appLocalData);
+                            alert("Ingelogd"); 
+			            },
+                  	},
+                    //complete: function(httpObj, textStatus, data){},
+                    error: function (parsedjson, textStatus, errorThrown) {
+                        appLocalData[0].sid = "";
+                        localStorage["app_data"] = JSON.stringify(appLocalData);
+                        alert(parsedjson.statusText);
+                    },
+                    async: false
+                });
+                viewModel.set("isLoggedIn", (appLocalData[0].sid != ""));
+            },
+            logout: function(e) {         
+                appLocalData[0].sid = "";
+                localStorage["app_data"] = JSON.stringify(appLocalData);
+                
+				var url=this.get("fldserver"); 
+            	
+                $.ajax({
+					type: "GET",
+                    url: url + "logout",
+                    statusCode: {
+                        404:function() { alert("Server niet gevonden"); },
+                        200:function() { alert("Uitgelogd"); },
+                  	},
+                    async: false
+                });
+                viewModel.set("isLoggedIn", (appLocalData[0].sid != ""));
+            },
+            isLoggedIn: function() {
+                return (appLocalData[0].sid != "");
+            }
+        });
+
+        kendo.bind($("#appSettings"), viewModel);
+
+        $("#btnRefresh").kendoButton({
+            icon: "refresh"
+        });
+        
+        $("#btnSettings").kendoButton({
+            icon: "more"
+        });
+
+        $("#btnScan").kendoButton({
+            icon: "search"
+        });
+        
+        /* Grid */
+        $("#grid").kendoGrid({
+            dataSource: wegingenDataSource,
+            sortable: true,
+
+            scrollable: false,
+
+            editable: {
+                mode: "popup",
+                template: kendo.template($("#popup-editor").html()),
+                window : {
+			        title: "Weegbon",
+                    draggable: false,
+                    /*modal: true,*/
+                    pinned: true,
+    			},
+            },
+            edit: function(e) {
+	        	initDropDownLists();
+                $(e.container).data("kendoWindow").maximize();
+        	},
+            autoBind: true,
+	        dataBinding: function() {   
+                /*alert("dataBinding");*/
+            },
+	        dataBound: function() {   
+                /*alert("dataBound");*/
+            },
+            columns: [
+                {
+                    field: "bonnr",
+                    title: "Bonnr",
+                    width: "90px",
+                }, 
+                {
+                    field: "afval_omschr.substr(0,20)",
+                    width: "140px", 
+                    title: "Afval",
+                },
+                { 	command: [
+                 		{ 	name: "edit",
+                          	text: 
+                         	{ 
+                                edit: "",
+                             	update: "Opslaan",
+                               	cancel: "Annuleren"
+                            }
+                        },
+                    ], 
+                 	title: "&nbsp;", 
+                 	width: "8px" 
+                },
+            ]
+        });
+    });
+    
+    function initDropDownLists() {
+        var afvaltype = $("#afvaltype").kendoDropDownList({
+            dataSource: [
+                { afval_type: "C1" },
+                { afval_type: "C2" },
+                { afval_type: "C3" }
+            ],
+            dataValueField: "afval_type",
+            dataTextField: "afval_type",
+            enable: false,
+        }).data("kendoDropDownList");
+        
+        var afval = $("#afval").kendoDropDownList({
+            cascadeFrom: "afvaltype",
+            dataTextField: "afval_omschr",
+            dataValueField: "afval_id",
+            dataSource: afvalDataSource,
+        }).data("kendoDropDownList");
+        
+    };
+    
+    function findWeging(hiddenkey) {
+        var view = kendo.data.Query.process(wegingenDataSource.data(), {
+                        filter: wegingenDataSource.filter(),
+                        sort: wegingenDataSource.sort()
+                    })
+                    .data;
+
+        var index = -1;
+        for (var x = 0; x < view.length; x++) {
+            if (view[x].hiddenkey == hiddenkey) {
+                index = x;
+                break;
+            }
+        }
+
+        if (index === -1) {
+            return;
+        }
+        
+        index = index + 1;
+        
+        var grid = $("#grid").data("kendoGrid");
+		grid.editRow($("#grid tr:eq(" + index + ")"));
+  
+	};
+
+</script>    
+</div einde="kendoUiMobileApp">
+
+<style>
+
+/*
+    Increase the width of the edit form.
+    The default one is 400px.
+*/
+
+.k-edit-form-container
+{
+    width: 280px;
+}
+
+/*
+    Decrease the width of the edit form labels. The default one is 30%.
+    The new width should depend on the column titles.
+    Switch the text alignment to the left. By default, it is to the right.
+*/
+
+.k-popup-edit-form .k-edit-label
+{
+    width: 20%;
+    text-align: left;
+}
+
+.k-grid .k-button
+{
+    min-width: 0 !important;
+}    
+                
+
+</style>        
     <!-- END_CUSTOM_CODE_kendoUiMobileApp -->
 </body>
 

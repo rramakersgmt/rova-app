@@ -10,7 +10,6 @@
 
     <script src="cordova.js"></script>
     <script src="kendo/js/jquery.min.js"></script>
-    <script src="app.js"></script>
     <script src="http://kendo.cdn.telerik.com/2016.2.504/js/kendo.all.min.js"></script>
 
     <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2016.2.504/styles/kendo.common.min.css"/>
@@ -21,9 +20,7 @@
 </head>
 
 <body id="kendoUiMobileApp">
-
-<script src="components/home/index.js"></script>
-<script src="scripts/scanner.js"></script>
+<script src="app.js"></script>
 
     <!-- START_CUSTOM_CODE_kendoUiMobileApp -->
     <!-- Add custom code here. For more information about custom code, see http://docs.telerik.com/platform/screenbuilder/troubleshooting/how-to-keep-custom-code-changes -->
@@ -33,7 +30,7 @@
     data-role="view" 
     data-title="Wegingen" 
 	data-layout="main" 
-    data-model="app.demoService.viewModel" 
+    data-model="app.home" 
     data-show="app.home.onShow" 
     data-after-show="app.home.afterShow"
 >
@@ -388,7 +385,7 @@
 	};
 
 </script>    
-</div einde="kendoUiMobileApp">
+</div>
 
 <style>
 

@@ -61,18 +61,18 @@
 	<div>
     	<ul class="fieldlist" style="padding-left: 0px;">
             <h3>Server</h3> 
-            <input id="fldserver" 	type="text" data-bind="value:fldserver" 	class="k-textbox" style="width:300px;"/>
+            <input id="fldserver" 	type="text" data-bind="value:fldserver, disabled:isLoggedIn"   class="k-textbox" style="width:300px;"/>
             <h3>Login</h3> 
-            <input id="fldlogin" 	type="text" data-bind="value:fldlogin" 	class="k-textbox" />
+            <input id="fldlogin" 	type="text" data-bind="value:fldlogin, disabled:isLoggedIn"    class="k-textbox" />
             <h3>Wachtwoord</h3> 
-            <input id="fldpassword" type="text" data-bind="value:fldpassword" class="k-textbox" />
+            <input id="fldpassword" type="text" data-bind="value:fldpassword, disabled:isLoggedIn" class="k-textbox"/>
         </ul>
     </div>
 
     <footer data-role="footer" >
         <button id="btnlogin"  type="button" class="k-button" data-bind="click: login,  invisible: isLoggedIn">Login</button>
         <button id="btnlogout" type="button" class="k-button" data-bind="click: logout,   visible: isLoggedIn">Logout</button>
-        <button id="btnSave"   type="button" class="k-button" data-bind="click: save"                         >Opslaan</button>
+        <!--button id="btnSave"   type="button" class="k-button" data-bind="click: save"                         >Opslaan</button-->
         <button id="btnClose"  type="button" class="k-button" data-bind="click: close"                        >Sluit</button>
     </footer>
 </div>          
@@ -210,8 +210,7 @@
                viewModel.set("fldlogin", appLocalData[0].login);
                viewModel.set("fldpassword", appLocalData[0].password);
                appSettingsWindow.close(); 
-                
-                //$("#appSettings").data("kendoWindow").refresh(appLocalData); 
+
             },
             login: function(e) {
                 var url=this.get("fldserver"); 
@@ -236,7 +235,10 @@
                         },*/
                         200:function(data) { 
                             appLocalData[0].sid 	 = data[0].sid;
-			                localStorage["app_data"] = JSON.stringify(appLocalData);
+                            appLocalData[0].server   = url;
+                            appLocalData[0].login    = logindata.usr;
+                            appLocalData[0].password = logindata.pwd;
+                            localStorage["app_data"] = JSON.stringify(appLocalData);
                             alert("Ingelogd"); 
 			            },
                   	},

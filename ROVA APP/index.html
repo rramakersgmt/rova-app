@@ -61,11 +61,11 @@
 	<div>
     	<ul class="fieldlist" style="padding-left: 0px;">
             <h3>Server</h3> 
-            <input id="fldserver" 	type="text" data-bind="value:fldserver, disabled:isLoggedIn"   class="k-textbox" style="width:300px;"/>
+            <input id="fldserver" 	data-bind="value:fldserver, disabled:isLoggedIn"   class="k-textbox" type="text" style="width:300px;"/>
             <h3>Login</h3> 
-            <input id="fldlogin" 	type="text" data-bind="value:fldlogin, disabled:isLoggedIn"    class="k-textbox" />
+            <input id="fldlogin" 	data-bind="value:fldlogin, disabled:isLoggedIn"    class="k-textbox" type="text"/>
             <h3>Wachtwoord</h3> 
-            <input id="fldpassword" type="text" data-bind="value:fldpassword, disabled:isLoggedIn" class="k-textbox"/>
+            <input id="fldpassword" data-bind="value:fldpassword, disabled:isLoggedIn" class="k-textbox" type="password"/>
         </ul>
     </div>
 
@@ -423,7 +423,10 @@
     min-width: 0 !important;
 }    
                 
-
+.k-window-action
+{
+    visibility: hidden ;
+}
 </style>        
     <!-- END_CUSTOM_CODE_kendoUiMobileApp -->
 </body>

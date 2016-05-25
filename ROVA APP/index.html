@@ -36,25 +36,26 @@
 >
 
 <script id="popup-editor" type="text/x-kendo-template">
-    <div style="width: 250px; float:left; margin-left: 10px; margin-bottom: 5%; margin-right: 8%">
+    <div style="width: 300px; float:left; margin-left: 10px; margin-bottom: 40px; margin-right: 10px">
         <table>
-        <tr><td><label>Bonnr:  	</label></td><td align="right">#=bonnr#			</td><tr>
-        <tr><td><label>Datum:	</label></td><td align="right">#=datum#			</td><tr>
-        <tr><td><label>Gewicht:	</label></td><td align="right">#=inweging# kg	</td><tr>
-        <tr><td><label>Quotum: 	</label></td><td align="right">#=quotum# kg		</td><tr>
-        <tr><td><label>Adres:  	</label></td><td align="right">#=postcode#		</td><tr>
-        <tr><td><label>     	</label></td><td align="right">#=gemeente#		</td><tr>
-        <tr><td><label>     	</label></td><td align="right">#=straat#		</td><tr>
-        <tr><td><label>Tarief:	</label></td><td align="right" format: "{0:c}">&euro; #=afval_prijs#</td><tr>
+        <tr><td style="width: 100px;"><label>Bonnr:  	</label></td><td align="right">#=bonnr#			</td></tr>
+        <tr><td><label>Datum:	</label></td><td align="right">#=datum#			</td></tr>
+        <tr><td><label>Gewicht:	</label></td><td align="right">#=inweging# kg	</td></tr>
+        <tr><td><label>Quotum: 	</label></td><td align="right">#=quotum# kg		</td></tr>
+        <tr><td><label>Adres:  	</label></td><td align="right">#=postcode#		</td></tr>
+        <tr><td><label>     	</label></td><td align="right">#=gemeente#		</td></tr>
+        <tr><td><label>     	</label></td><td align="right">#=straat#		</td></tr>
+        <tr><td><label>Tarief:	</label></td><td align="right" format: "{0:c}">&euro; #=afval_prijs#</td></tr>
         <tr><td><label>Type:	</label></td><td align="right"">
             <input id="afvaltype" data-bind="value:afval_type" style="width: 60px;"/>
-    	</td><tr>
+    	</td></tr>
         <tr><td><label>Afval:	</label></td><td align="right"">
-	        <input id="afval" 	  data-bind="value:afval"      style="width: 180px;"/>
-    	</td><tr>
+	        <input id="afval" 	  data-bind="value:afval"      style="width: 200px;"/>
+    	</td></tr>
         </table>
-
   	</div>
+    <div id="prijs" style="color:red; width:300px; float:left; margin-left:10px; margin-right:10px"></div>
+        
 </script>
     
 <div id="appSettings" style="display:none" class="demo-section k-content wide">
@@ -108,7 +109,7 @@
         transport: {
             read: {
                 url: url + "afval",
-                data: {sid: appLocalData[0].sid},
+                data: {sid: appLocalData[0].sid, usr: appLocalData[0].login},
                 /*jsonpCallback: "CallBackAfval",*/
                 type: "get",
                 dataType: "json",
@@ -137,7 +138,7 @@
                 url: url + "wegingen",
                 /*jsonpCallback: "CallBackWegingen",*/
                 type: "get",
-                data: {sid: appLocalData[0].sid},
+                data: {sid: appLocalData[0].sid, usr: appLocalData[0].login},
                 dataType: "json",
                 cache: false,
             },
@@ -184,7 +185,6 @@
     }).data("kendoWindow");
 
     $("#btnSettings").click(function () {
-		appSettingsWindow.refresh();
         appSettingsWindow.open();
         appSettingsWindow.maximize();
     });
@@ -361,6 +361,13 @@
             dataTextField: "afval_omschr",
             dataValueField: "afval_id",
             dataSource: afvalDataSource,
+            select: function(e) {
+				var dataItem = this.dataItem(e.item);
+                
+                var encodingTemplate = kendo.template('<table><tr><td style="width: 100px;"><label>Nieuw tarief:	</label></td><td style="width: 200px;" align="right" format: "{0:c}">&euro; ${ prijs }</td></tr></table>');
+                var encodingData = { prijs: dataItem.prijs };
+                $("#prijs").html(encodingTemplate(encodingData));
+            }
         }).data("kendoDropDownList");
         
     };

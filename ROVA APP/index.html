@@ -184,8 +184,9 @@
     }).data("kendoWindow");
 
     $("#btnSettings").click(function () {
-        $("#appSettings").data("kendoWindow").open();
-        $("#appSettings").data("kendoWindow").maximize();
+		appSettingsWindow.refresh();
+        appSettingsWindow.open();
+        appSettingsWindow.maximize();
     });
 
     function Refresh() {
@@ -202,10 +203,14 @@
                 appLocalData[0].login    = this.get("fldlogin");
                 appLocalData[0].password = this.get("fldpassword");
                 localStorage["app_data"] = JSON.stringify(appLocalData);
-                $("#appSettings").data("kendoWindow").close(); 
+                appSettingsWindow.close(); 
             },
             close: function(e) {         
-                $("#appSettings").data("kendoWindow").close(); 
+               viewModel.set("fldserver", appLocalData[0].server);
+               viewModel.set("fldlogin", appLocalData[0].login);
+               viewModel.set("fldpassword", appLocalData[0].password);
+               appSettingsWindow.close(); 
+                
                 //$("#appSettings").data("kendoWindow").refresh(appLocalData); 
             },
             login: function(e) {
